@@ -63,21 +63,21 @@ public class MainFrame extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setBackground(UITheme.ACCENT);
         menuBar.setBorder(BorderFactory.createLineBorder(UITheme.ACCENT, 1));
-        
+
         // File Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.setFont(UITheme.bodyFont(13));
         fileMenu.setForeground(Color.WHITE);
         fileMenu.setBackground(UITheme.ACCENT);
         fileMenu.setOpaque(true);
-        
-        JMenuItem saveItem = new JMenuItem("💾 Save All Data (CSV)");
-        JMenuItem openExcelItem = new JMenuItem("📊 Open in Excel");
-        JMenuItem exportItem = new JMenuItem("📤 Export to CSV");
-        JMenuItem fileLocationsItem = new JMenuItem("📁 View File Locations");
-        JMenuItem backupInfoItem = new JMenuItem("🔄 View Backups");
-        JMenuItem exitItem = new JMenuItem("🚪 Exit");
-        
+
+        JMenuItem saveItem = new JMenuItem(" Save All Data (CSV)");
+        JMenuItem openExcelItem = new JMenuItem(" Open in Excel");
+        JMenuItem exportItem = new JMenuItem(" Export to CSV");
+        JMenuItem fileLocationsItem = new JMenuItem(" View File Locations");
+        JMenuItem backupInfoItem = new JMenuItem(" View Backups");
+        JMenuItem exitItem = new JMenuItem(" Exit");
+
         // Style menu items
         styleMenuItem(saveItem);
         styleMenuItem(openExcelItem);
@@ -85,23 +85,22 @@ public class MainFrame extends JFrame {
         styleMenuItem(fileLocationsItem);
         styleMenuItem(backupInfoItem);
         styleMenuItem(exitItem);
-        
+
         saveItem.addActionListener(e -> FileManager.showSaveDialog(systemPanel, this));
         openExcelItem.addActionListener(e -> {
-            // Simple message since showOpenInExcelDialog doesn't exist
             JOptionPane.showMessageDialog(this,
-                "To open in Excel:\n" +
-                "1. Save data first (File → Save All Data)\n" +
-                "2. Go to food_delivery_data folder\n" +
-                "3. Double-click any .csv file",
-                "Open in Excel",
-                JOptionPane.INFORMATION_MESSAGE);
+                    "To open in Excel:\n" +
+                            "1. Save data first (File → Save All Data)\n" +
+                            "2. Go to food_delivery_data folder\n" +
+                            "3. Double-click any .csv file",
+                    "Open in Excel",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
         exportItem.addActionListener(e -> FileManager.exportToExcelFormat(systemPanel, this));
         fileLocationsItem.addActionListener(e -> FileManager.showFileLocationsDialog(this));
         backupInfoItem.addActionListener(e -> FileManager.showBackupInfoDialog(this));
         exitItem.addActionListener(e -> exitApplication());
-        
+
         fileMenu.add(saveItem);
         fileMenu.addSeparator();
         fileMenu.add(openExcelItem);
@@ -111,30 +110,31 @@ public class MainFrame extends JFrame {
         fileMenu.add(backupInfoItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
-        
+
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setFont(UITheme.bodyFont(13));
         helpMenu.setForeground(Color.WHITE);
         helpMenu.setBackground(UITheme.ACCENT);
         helpMenu.setOpaque(true);
-        
+
         JMenuItem aboutItem = new JMenuItem("About");
         styleMenuItem(aboutItem);
         aboutItem.addActionListener(e -> showAboutDialog());
-        
+
         helpMenu.add(aboutItem);
-        
+
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-        
+
         setJMenuBar(menuBar);
     }
-    
+
+    // Helper to style menu items
     private void styleMenuItem(JMenuItem item) {
         item.setFont(UITheme.bodyFont(12));
         item.setBackground(Color.WHITE);
-        item.setForeground(Color.BLACK);
+        item.setForeground(UITheme.TEXT_DARK);
         item.setOpaque(true);
         item.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
     }

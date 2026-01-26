@@ -4,13 +4,9 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */import javax.swing.*;
+import javax.swing.*;
 import java.awt.*;
 
-    
 public class AssignmentPanel extends JPanel {
 
     public AssignmentPanel(FoodDeliverySystem system) {
@@ -27,8 +23,9 @@ public class AssignmentPanel extends JPanel {
         JButton manualBtn = new JButton("Manual Assignment");
         JButton autoBtn = new JButton("Auto Assign (Priority Queue)");
 
-        UITheme.styleButtonSecondary(manualBtn);
-        UITheme.styleButtonSecondary(autoBtn);
+        // Style both buttons with red text, white background, red border
+        styleRedTextButton(manualBtn);
+        styleRedTextButton(autoBtn);
 
         manualBtn.setFont(UITheme.headingFont(16));
         autoBtn.setFont(UITheme.headingFont(16));
@@ -42,7 +39,8 @@ public class AssignmentPanel extends JPanel {
 
     private JPanel header() {
         JPanel h = UITheme.cardPanel(new BorderLayout());
-        JLabel title = new JLabel("🛵 ORDER ASSIGNMENT");
+
+        JLabel title = new JLabel("ORDER ASSIGNMENT");
         title.setFont(UITheme.titleFont(22));
         title.setForeground(UITheme.ACCENT);
 
@@ -54,4 +52,18 @@ public class AssignmentPanel extends JPanel {
         return h;
     }
 
+    // Helper method to style buttons with red text, white background, red border
+    private void styleRedTextButton(JButton button) {
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setFocusPainted(false);
+        button.setBackground(Color.WHITE);
+        button.setForeground(UITheme.ACCENT);
+        button.setFont(UITheme.headingFont(14));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UITheme.ACCENT, 2),
+                BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        ));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
 }

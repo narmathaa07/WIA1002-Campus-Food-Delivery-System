@@ -4,10 +4,6 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
 import javax.swing.*;
 import java.awt.*;
 
@@ -35,7 +31,7 @@ public class StatisticsPanel extends JPanel {
         card.add(new JScrollPane(statsArea), BorderLayout.CENTER);
 
         JButton refreshBtn = new JButton("Refresh Statistics");
-        UITheme.styleButtonSecondary(refreshBtn);
+        styleRedTextButton(refreshBtn);
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.setOpaque(false);
@@ -48,7 +44,7 @@ public class StatisticsPanel extends JPanel {
 
     private JPanel header() {
         JPanel h = UITheme.cardPanel(new BorderLayout());
-        JLabel title = new JLabel("📊 SYSTEM STATISTICS");
+        JLabel title = new JLabel("SYSTEM STATISTICS");
         title.setFont(UITheme.titleFont(22));
         title.setForeground(UITheme.ACCENT);
 
@@ -58,5 +54,20 @@ public class StatisticsPanel extends JPanel {
         h.add(title, BorderLayout.NORTH);
         h.add(sub, BorderLayout.SOUTH);
         return h;
+    }
+
+    // Helper method to style buttons with red text, white background, red border
+    private void styleRedTextButton(JButton button) {
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setFocusPainted(false);
+        button.setBackground(Color.WHITE);
+        button.setForeground(UITheme.ACCENT);
+        button.setFont(UITheme.headingFont(14));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UITheme.ACCENT, 2),
+                BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        ));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

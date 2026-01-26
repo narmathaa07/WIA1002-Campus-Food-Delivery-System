@@ -1,14 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.fooddelivery3;
-
-/**
- *
- * @author ASUS
- */
-
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -42,26 +32,26 @@ public class RidersPanel extends JPanel {
         JPanel searchPanel = new JPanel(new BorderLayout(10, 0));
         searchPanel.setOpaque(false);
         searchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        
-        JLabel searchLabel = new JLabel("🔍 Search Riders:");
+
+        JLabel searchLabel = new JLabel("Search Riders:");
         searchLabel.setFont(UITheme.headingFont(14));
-        
+
         searchField = new JTextField();
         searchField.setFont(UITheme.bodyFont(13));
         searchField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 220, 195), 1),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
+                BorderFactory.createLineBorder(new Color(180, 220, 195), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
         ));
         searchField.setToolTipText("Search by ID, Name, Location, or Status");
-        
+
         JButton clearSearchBtn = new JButton("Clear");
-        UITheme.styleButtonSecondary(clearSearchBtn);
+        styleRedTextButton(clearSearchBtn);
         clearSearchBtn.setPreferredSize(new Dimension(80, 35));
-        
+
         searchPanel.add(searchLabel, BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(clearSearchBtn, BorderLayout.EAST);
-        
+
         card.add(searchPanel, BorderLayout.NORTH);
 
         // Table
@@ -71,7 +61,7 @@ public class RidersPanel extends JPanel {
             public boolean isCellEditable(int row, int col) {
                 return false;
             }
-            
+
             @Override
             public Class<?> getColumnClass(int column) {
                 return String.class;
@@ -82,11 +72,11 @@ public class RidersPanel extends JPanel {
         table.setRowHeight(32);
         table.setFont(UITheme.bodyFont(14));
         table.getTableHeader().setFont(UITheme.headingFont(13));
-        
+
         // Enable sorting
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
-        
+
         // Status pill renderer (Status = col index 3)
         table.getColumnModel().getColumn(3).setCellRenderer(new RiderStatusCellRenderer());
 
@@ -98,19 +88,19 @@ public class RidersPanel extends JPanel {
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         actions.setOpaque(false);
 
-        JButton addBtn = new JButton("➕ Add Rider");
-        JButton deleteBtn = new JButton("🗑️ Delete Rider");
-        JButton setAvailableBtn = new JButton("🟢 Set Available");
-        JButton setOfflineBtn = new JButton("⚫ Set Offline");
-        JButton refreshBtn = new JButton("🔄 Refresh");
-        JButton exportBtn = new JButton("📋 Export List");
+        JButton addBtn = new JButton("Add Rider");
+        JButton deleteBtn = new JButton("Delete Rider");
+        JButton setAvailableBtn = new JButton("Set Available");
+        JButton setOfflineBtn = new JButton("Set Offline");
+        JButton refreshBtn = new JButton("Refresh");
+        JButton exportBtn = new JButton("Export List");
 
-        UITheme.styleButtonSecondary(addBtn);
-        UITheme.styleButtonSecondary(deleteBtn);
-        UITheme.styleButtonSecondary(setAvailableBtn);
-        UITheme.styleButtonSecondary(setOfflineBtn);
-        UITheme.styleButtonSecondary(refreshBtn);
-        UITheme.styleButtonSecondary(exportBtn);
+        styleRedTextButton(addBtn);
+        styleRedTextButton(deleteBtn);
+        styleRedTextButton(setAvailableBtn);
+        styleRedTextButton(setOfflineBtn);
+        styleRedTextButton(refreshBtn);
+        styleRedTextButton(exportBtn);
 
         actions.add(addBtn);
         actions.add(deleteBtn);
@@ -125,7 +115,7 @@ public class RidersPanel extends JPanel {
         refreshTable();
 
         // ==================== ACTION LISTENERS ====================
-        
+
         // Search functionality
         searchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -138,29 +128,29 @@ public class RidersPanel extends JPanel {
                 }
             }
         });
-        
+
         clearSearchBtn.addActionListener(e -> {
             searchField.setText("");
             sorter.setRowFilter(null);
         });
-        
+
         // Add rider
         addBtn.addActionListener(e -> {
             system.showAddRiderDialog();
             refreshTable();
         });
-        
+
         // Delete rider
         deleteBtn.addActionListener(e -> deleteSelectedRider());
-        
+
         // Refresh
         refreshBtn.addActionListener(e -> refreshTable());
-        
+
         // Set Available
         setAvailableBtn.addActionListener(e -> {
             Rider r = getSelectedRider();
             if (r == null) return;
-            
+
             if ("Delivering".equals(r.getStatus())) {
                 JOptionPane.showMessageDialog(this,
                         "This rider is currently Delivering.\nComplete the order before changing status.",
@@ -168,16 +158,16 @@ public class RidersPanel extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+
             r.setStatus("Available");
             refreshTable();
         });
-        
+
         // Set Offline
         setOfflineBtn.addActionListener(e -> {
             Rider r = getSelectedRider();
             if (r == null) return;
-            
+
             if ("Delivering".equals(r.getStatus())) {
                 JOptionPane.showMessageDialog(this,
                         "This rider is currently Delivering.\nComplete the order before setting Offline.",
@@ -185,14 +175,14 @@ public class RidersPanel extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+
             r.setStatus("Offline");
             refreshTable();
         });
-        
+
         // Export List
         exportBtn.addActionListener(e -> exportRiderList());
-        
+
         // Double-click to view rider details
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -207,7 +197,7 @@ public class RidersPanel extends JPanel {
     private JPanel header() {
         JPanel h = UITheme.cardPanel(new BorderLayout());
 
-        JLabel title = new JLabel("🚴 RIDER MANAGEMENT");
+        JLabel title = new JLabel("RIDER MANAGEMENT");
         title.setFont(UITheme.titleFont(22));
         title.setForeground(UITheme.ACCENT);
 
@@ -226,7 +216,7 @@ public class RidersPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Select a rider row first.");
             return null;
         }
-        
+
         // Convert view row index to model row index (for sorting)
         int modelRow = table.convertRowIndexToModel(row);
         String riderId = model.getValueAt(modelRow, 0).toString();
@@ -239,94 +229,94 @@ public class RidersPanel extends JPanel {
 
         return r;
     }
-    
+
     // NEW: Delete selected rider
     private void deleteSelectedRider() {
         Rider r = getSelectedRider();
         if (r == null) return;
-        
+
         system.deleteRider(r.getRiderId());
         refreshTable();
     }
-    
+
     // NEW: Show rider details
     private void showRiderDetails() {
         Rider r = getSelectedRider();
         if (r == null) return;
-        
+
         StringBuilder sb = new StringBuilder();
-        sb.append("🚴 RIDER DETAILS\n");
+        sb.append("RIDER DETAILS\n");
         sb.append("══════════════════════════════════════\n\n");
-        
+
         sb.append("ID:            ").append(r.getRiderId()).append("\n");
         sb.append("Name:          ").append(r.getRiderName()).append("\n");
         sb.append("Location:      ").append(r.getCurrentLocation()).append("\n");
         sb.append("Status:        ").append(r.getStatus()).append("\n\n");
-        
+
         // Show assigned orders
-        sb.append("📦 ASSIGNED ORDERS:\n");
+        sb.append("ASSIGNED ORDERS:\n");
         sb.append("────────────────────\n");
-        
+
         int assignedCount = 0;
         for (int i = 0; i < system.allOrders.size(); i++) {
             Order order = system.allOrders.get(i);
             if (order != null && r.getRiderId().equals(order.getAssignedRiderId())) {
                 sb.append("• Order ").append(order.getOrderId())
-                  .append(" - ").append(order.getStatus())
-                  .append(" (").append(order.getStudentName()).append(")\n");
+                        .append(" - ").append(order.getStatus())
+                        .append(" (").append(order.getStudentName()).append(")\n");
                 assignedCount++;
             }
         }
-        
+
         if (assignedCount == 0) {
             sb.append("No orders currently assigned\n");
         }
-        
-        sb.append("\n📊 STATS:\n");
+
+        sb.append("\nSTATS:\n");
         sb.append("────────────────────\n");
         sb.append("Total orders assigned: ").append(assignedCount).append("\n");
-        
+
         JTextArea area = new JTextArea(sb.toString());
         area.setEditable(false);
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setMargin(new Insets(10, 10, 10, 10));
-        
+
         JOptionPane.showMessageDialog(
-            this, new JScrollPane(area),
-            "Rider Details - " + r.getRiderName(),
-            JOptionPane.INFORMATION_MESSAGE);
+                this, new JScrollPane(area),
+                "Rider Details - " + r.getRiderName(),
+                JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     // NEW: Export rider list
     private void exportRiderList() {
         StringBuilder sb = new StringBuilder();
         sb.append("CAMPUS FOOD DELIVERY - RIDER LIST\n");
         sb.append("Generated: ").append(java.time.LocalDateTime.now()).append("\n");
         sb.append("══════════════════════════════════════\n\n");
-        
+
         CustomHashMap.Entry<String, Rider>[] entries = system.ridersById.entries();
         if (entries == null || entries.length == 0) {
             sb.append("No riders in system.\n");
         } else {
-            sb.append(String.format("%-10s %-20s %-20s %-15s\n", 
-                "ID", "Name", "Location", "Status"));
-            sb.append(String.format("%-10s %-20s %-20s %-15s\n", 
-                "──", "────", "────────", "──────"));
-            
+            sb.append(String.format("%-10s %-20s %-20s %-15s\n",
+                    "ID", "Name", "Location", "Status"));
+            sb.append(String.format("%-10s %-20s %-20s %-15s\n",
+                    "──", "────", "────────", "──────"));
+
             for (int i = 0; i < entries.length; i++) {
                 if (entries[i] != null && entries[i].value != null) {
                     Rider r = entries[i].value;
-                    sb.append(String.format("%-10s %-20s %-20s %-15s\n", 
-                        r.getRiderId(), 
-                        r.getRiderName(), 
-                        r.getCurrentLocation(), 
-                        r.getStatus()));
+                    sb.append(String.format("%-10s %-20s %-20s %-15s\n",
+                            r.getRiderId(),
+                            r.getRiderName(),
+                            r.getCurrentLocation(),
+                            r.getStatus()));
                 }
             }
-            
-            sb.append("\n📊 SUMMARY:\n");
+
+            sb.append("\nSUMMARY:\n");
             sb.append("Total Riders: ").append(system.ridersById.size()).append("\n");
-            
+
             // Count by status
             int available = 0, delivering = 0, offline = 0;
             for (int i = 0; i < entries.length; i++) {
@@ -337,21 +327,21 @@ public class RidersPanel extends JPanel {
                     else if ("Offline".equals(status)) offline++;
                 }
             }
-            
+
             sb.append("Available:    ").append(available).append("\n");
             sb.append("Delivering:   ").append(delivering).append("\n");
             sb.append("Offline:      ").append(offline).append("\n");
         }
-        
+
         JTextArea area = new JTextArea(sb.toString());
         area.setEditable(false);
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setMargin(new Insets(10, 10, 10, 10));
-        
+
         JOptionPane.showMessageDialog(
-            this, new JScrollPane(area),
-            "Rider List Export",
-            JOptionPane.INFORMATION_MESSAGE);
+                this, new JScrollPane(area),
+                "Rider List Export",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void refreshTable() {
@@ -372,11 +362,26 @@ public class RidersPanel extends JPanel {
                 });
             }
         }
-        
+
         // Update search if there's text
         String searchText = searchField.getText().trim();
         if (!searchText.isEmpty()) {
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + searchText));
         }
+    }
+
+    // ✅ Helper method to style buttons with red text, white background, red border
+    private void styleRedTextButton(JButton button) {
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setFocusPainted(false);
+        button.setBackground(Color.WHITE);
+        button.setForeground(UITheme.ACCENT);
+        button.setFont(UITheme.headingFont(14));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UITheme.ACCENT, 2),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

@@ -4,14 +4,6 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
-
-
-
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -48,57 +40,57 @@ public class OrdersPanel extends JPanel {
         controlPanel.setOpaque(true);
         controlPanel.setBackground(Color.WHITE);
         controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        
+
         // Left side: Search
         JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
         searchPanel.setOpaque(true);
         searchPanel.setBackground(Color.WHITE);
-        
-        JLabel searchLabel = new JLabel("🔍 Search:");
+
+        JLabel searchLabel = new JLabel("Search:");
         searchLabel.setFont(UITheme.headingFont(14));
         searchLabel.setForeground(Color.BLACK);
-        
+
         searchField = new JTextField();
         searchField.setFont(UITheme.bodyFont(13));
         searchField.setForeground(Color.BLACK);
         searchField.setBackground(Color.WHITE);
         searchField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 220, 195), 2),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
+                BorderFactory.createLineBorder(new Color(180, 220, 195), 2),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
         ));
         searchField.setToolTipText("Search by Order ID, Student Name, Email, or Location");
-        
+
         JButton clearSearchBtn = new JButton("Clear");
-        styleSecondaryButtonForVisibility(clearSearchBtn);
+        styleRedTextButton(clearSearchBtn);
         clearSearchBtn.setPreferredSize(new Dimension(80, 35));
-        
+
         searchPanel.add(searchLabel, BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(clearSearchBtn, BorderLayout.EAST);
-        
+
         // Right side: Filter
         JPanel filterPanel = new JPanel(new BorderLayout(5, 0));
         filterPanel.setOpaque(true);
         filterPanel.setBackground(Color.WHITE);
-        
-        JLabel filterLabel = new JLabel("📊 Filter:");
+
+        JLabel filterLabel = new JLabel("Filter:");
         filterLabel.setFont(UITheme.headingFont(14));
         filterLabel.setForeground(Color.BLACK);
-        
-        String[] filterOptions = {"All Orders", "Pending", "Assigned", "Delivered", "Cancelled", 
-                                 "URGENT Only", "Normal Only"};
+
+        String[] filterOptions = {"All Orders", "Pending", "Assigned", "Delivered", "Cancelled",
+                "URGENT Only", "Normal Only"};
         filterCombo = new JComboBox<>(filterOptions);
         filterCombo.setFont(UITheme.bodyFont(13));
         filterCombo.setBackground(Color.WHITE);
         filterCombo.setForeground(Color.BLACK);
-        
+
         filterPanel.add(filterLabel, BorderLayout.WEST);
         filterPanel.add(filterCombo, BorderLayout.CENTER);
-        
+
         // Add both panels to control panel
         controlPanel.add(searchPanel, BorderLayout.CENTER);
         controlPanel.add(filterPanel, BorderLayout.EAST);
-        
+
         card.add(controlPanel, BorderLayout.NORTH);
 
         // ==================== ORDERS TABLE ====================
@@ -108,17 +100,17 @@ public class OrdersPanel extends JPanel {
             public boolean isCellEditable(int row, int col) {
                 return false;
             }
-            
+
             @Override
             public Class<?> getColumnClass(int column) {
                 return String.class;
             }
         };
-        
+
         table = new JTable(model);
         table.getColumnModel().getColumn(3).setCellRenderer(new StatusCellRenderer());
         table.getColumnModel().getColumn(2).setCellRenderer(new PriorityCellRenderer()); // ← USING THE SEPARATE CLASS
-        
+
         table.setFont(UITheme.bodyFont(13));
         table.setForeground(Color.BLACK);
         table.setBackground(Color.WHITE);
@@ -127,11 +119,11 @@ public class OrdersPanel extends JPanel {
         table.getTableHeader().setFont(UITheme.headingFont(13));
         table.getTableHeader().setBackground(new Color(240, 240, 240));
         table.getTableHeader().setForeground(Color.BLACK);
-        
+
         // Enable sorting
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
-        
+
         // Set column widths
         table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(120);
@@ -151,17 +143,17 @@ public class OrdersPanel extends JPanel {
         actions.setOpaque(true);
         actions.setBackground(Color.WHITE);
 
-        JButton createBtn = new JButton("➕ Create Order");
-        JButton cancelBtn = new JButton("✖ Cancel Order");
-        JButton completeBtn = new JButton("✔ Complete Order");
-        JButton viewDetailsBtn = new JButton("📋 View Details");
-        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton createBtn = new JButton("Create Order");
+        JButton cancelBtn = new JButton("Cancel Order");
+        JButton completeBtn = new JButton("Complete Order");
+        JButton viewDetailsBtn = new JButton("View Details");
+        JButton refreshBtn = new JButton("Refresh");
 
-        styleButtonForVisibility(createBtn);
-        styleSecondaryButtonForVisibility(cancelBtn);
-        styleSecondaryButtonForVisibility(completeBtn);
-        styleSecondaryButtonForVisibility(viewDetailsBtn);
-        styleSecondaryButtonForVisibility(refreshBtn);
+        styleRedTextButton(createBtn);
+        styleRedTextButton(cancelBtn);
+        styleRedTextButton(completeBtn);
+        styleRedTextButton(viewDetailsBtn);
+        styleRedTextButton(refreshBtn);
 
         actions.add(createBtn);
         actions.add(cancelBtn);
@@ -172,7 +164,7 @@ public class OrdersPanel extends JPanel {
         card.add(actions, BorderLayout.SOUTH);
 
         // ==================== EVENT LISTENERS ====================
-        
+
         // Search functionality
         searchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -180,15 +172,15 @@ public class OrdersPanel extends JPanel {
                 applyFilters();
             }
         });
-        
+
         clearSearchBtn.addActionListener(e -> {
             searchField.setText("");
             applyFilters();
         });
-        
+
         // Filter functionality
         filterCombo.addActionListener(e -> applyFilters());
-        
+
         // Create order
         createBtn.addActionListener(e -> {
             system.showCreateOrderDialog();
@@ -206,13 +198,13 @@ public class OrdersPanel extends JPanel {
             system.completeSelectedOrder(table);
             refreshTable();
         });
-        
+
         // View order details
         viewDetailsBtn.addActionListener(e -> showOrderDetails());
-        
+
         // Refresh table
         refreshBtn.addActionListener(e -> refreshTable());
-        
+
         // Double-click to view details
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -227,8 +219,8 @@ public class OrdersPanel extends JPanel {
     private JPanel header() {
         JPanel h = UITheme.cardPanel(new BorderLayout());
         h.setOpaque(true);
-        
-        JLabel title = new JLabel("📦 ORDER MANAGEMENT");
+
+        JLabel title = new JLabel("ORDER MANAGEMENT");
         title.setFont(UITheme.titleFont(22));
         title.setForeground(UITheme.ACCENT);
 
@@ -240,39 +232,27 @@ public class OrdersPanel extends JPanel {
         h.add(sub, BorderLayout.SOUTH);
         return h;
     }
-    
-    // Helper method to style buttons for maximum visibility
-    private void styleButtonForVisibility(JButton button) {
+
+    // Helper method to style buttons with red text, white background, red border
+    private void styleRedTextButton(JButton button) {
         button.setOpaque(true);
         button.setContentAreaFilled(true);
-        button.setFocusPainted(true);
+        button.setFocusPainted(false);
         button.setBackground(Color.WHITE);
         button.setForeground(UITheme.ACCENT);
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                BorderFactory.createLineBorder(UITheme.ACCENT, 2),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-    
-    private void styleSecondaryButtonForVisibility(JButton button) {
-        button.setOpaque(true);
-        button.setContentAreaFilled(true);
-        button.setFocusPainted(true);
-        button.setBackground(Color.WHITE);
-        button.setForeground(UITheme.ACCENT);
-        button.setFont(UITheme.headingFont(14));
-        button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-    }
-    
+
     // NEW: Apply both search and filter
     private void applyFilters() {
         final String searchText = searchField.getText().trim().toLowerCase();
         final String filterOption = (String) filterCombo.getSelectedItem();
-        
+
         sorter.setRowFilter(new RowFilter<DefaultTableModel, Integer>() {
             @Override
             public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
@@ -288,27 +268,27 @@ public class OrdersPanel extends JPanel {
                     }
                     if (!found) return false;
                 }
-                
+
                 // Status/Priority filter
                 if ("All Orders".equals(filterOption)) {
                     return true;
                 }
-                
+
                 String status = (String) entry.getValue(3);
                 String priority = (String) entry.getValue(2);
-                
+
                 if (filterOption.equals("Pending")) return "Pending".equals(status);
                 if (filterOption.equals("Assigned")) return "Assigned".equals(status);
                 if (filterOption.equals("Delivered")) return "Delivered".equals(status);
                 if (filterOption.equals("Cancelled")) return "Cancelled".equals(status);
                 if (filterOption.equals("URGENT Only")) return "URGENT".equals(priority);
                 if (filterOption.equals("Normal Only")) return "Normal".equals(priority);
-                
+
                 return true;
             }
         });
     }
-    
+
     // NEW: Show order details
     private void showOrderDetails() {
         int row = table.getSelectedRow();
@@ -316,35 +296,35 @@ public class OrdersPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Select an order first.");
             return;
         }
-        
+
         // Convert view row index to model row index (for sorting/filtering)
         int modelRow = table.convertRowIndexToModel(row);
         String orderId = model.getValueAt(modelRow, 0).toString();
         Order order = system.ordersById.get(orderId);
-        
+
         if (order == null) {
             JOptionPane.showMessageDialog(this, "Order not found!");
             return;
         }
-        
+
         StringBuilder sb = new StringBuilder();
-        sb.append("📦 ORDER DETAILS\n");
+        sb.append("ORDER DETAILS\n");
         sb.append("══════════════════════════════════════\n\n");
-        
+
         sb.append("Order ID:      ").append(order.getOrderId()).append("\n");
         sb.append("Student:       ").append(order.getStudentName()).append("\n");
         sb.append("Email:         ").append(order.getStudentEmail()).append("\n");
         sb.append("Pickup:        ").append(order.getPickupLocation()).append("\n");
         sb.append("Delivery:      ").append(order.getDeliveryLocation()).append("\n");
-        sb.append("Priority:      ").append(order.getPriority() == 1 ? "URGENT ⚡" : "Normal").append("\n");
+        sb.append("Priority:      ").append(order.getPriority() == 1 ? "URGENT" : "Normal").append("\n");
         sb.append("Status:        ").append(order.getStatus()).append("\n");
         sb.append("Order Time:    ").append(order.getOrderTime()).append("\n\n");
-        
+
         // Show assigned rider if any
         if (order.getAssignedRiderId() != null) {
             Rider rider = system.ridersById.get(order.getAssignedRiderId());
             if (rider != null) {
-                sb.append("🚴 ASSIGNED RIDER:\n");
+                sb.append("ASSIGNED RIDER:\n");
                 sb.append("────────────────────\n");
                 sb.append("Rider ID:    ").append(rider.getRiderId()).append("\n");
                 sb.append("Name:        ").append(rider.getRiderName()).append("\n");
@@ -352,15 +332,15 @@ public class OrdersPanel extends JPanel {
                 sb.append("Status:      ").append(rider.getStatus()).append("\n\n");
             }
         }
-        
-        sb.append("📍 PATH INFORMATION:\n");
+
+        sb.append("PATH INFORMATION:\n");
         sb.append("────────────────────\n");
-        
+
         CustomArrayList<String> path = system.campusMap.findShortestPath(
-            order.getPickupLocation(), 
-            order.getDeliveryLocation()
+                order.getPickupLocation(),
+                order.getDeliveryLocation()
         );
-        
+
         if (path != null && path.size() > 0) {
             sb.append("Shortest path (").append(path.size() - 1).append(" segments):\n");
             for (int i = 0; i < path.size(); i++) {
@@ -371,18 +351,18 @@ public class OrdersPanel extends JPanel {
         } else {
             sb.append("No path found between pickup and delivery locations.\n");
         }
-        
+
         JTextArea area = new JTextArea(sb.toString());
         area.setEditable(false);
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setForeground(Color.BLACK);
         area.setBackground(Color.WHITE);
         area.setMargin(new Insets(10, 10, 10, 10));
-        
+
         JOptionPane.showMessageDialog(
-            this, new JScrollPane(area),
-            "Order Details - " + orderId,
-            JOptionPane.INFORMATION_MESSAGE);
+                this, new JScrollPane(area),
+                "Order Details - " + orderId,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void refreshTable() {

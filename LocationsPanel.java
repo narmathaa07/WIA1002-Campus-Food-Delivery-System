@@ -4,13 +4,6 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
-
-
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -22,7 +15,7 @@ public class LocationsPanel extends JPanel {
     public LocationsPanel(FoodDeliverySystem system) {
         this.system = system;
         setLayout(new BorderLayout(16, 16));
-        setOpaque(true);  // Force opaque
+        setOpaque(true);
 
         JPanel page = UITheme.gradientPage(new BorderLayout(16, 16));
         page.setOpaque(true);
@@ -34,7 +27,7 @@ public class LocationsPanel extends JPanel {
         card.setOpaque(true);
         page.add(card, BorderLayout.CENTER);
 
-        JLabel section = new JLabel("📍 CAMPUS MAP (ADJACENCY LIST)");
+        JLabel section = new JLabel("CAMPUS MAP (ADJACENCY LIST)");
         section.setFont(UITheme.headingFont(16));
         section.setForeground(UITheme.TEXT_DARK);
 
@@ -44,8 +37,8 @@ public class LocationsPanel extends JPanel {
         mapArea.setBackground(Color.WHITE);
         mapArea.setForeground(Color.BLACK);
         mapArea.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
-            BorderFactory.createEmptyBorder(12, 12, 12, 12)
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                BorderFactory.createEmptyBorder(12, 12, 12, 12)
         ));
 
         refreshMap();
@@ -60,26 +53,26 @@ public class LocationsPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         // First row - Basic operations
-        JButton addLocationBtn = new JButton("➕ Add Location");
-        JButton addRouteBtn = new JButton("🛣️ Add Route");
-        JButton findPathBtn = new JButton("🗺️ Find Shortest Path");
-        JButton refreshBtn = new JButton("🔄 Refresh Map");
+        JButton addLocationBtn = new JButton("Add Location");
+        JButton addRouteBtn = new JButton("Add Route");
+        JButton findPathBtn = new JButton("Find Shortest Path");
+        JButton refreshBtn = new JButton("Refresh Map");
 
         // Second row - Delete and management operations
-        JButton deleteLocationBtn = new JButton("🗑️ Delete Location");
-        JButton deleteRouteBtn = new JButton("❌ Delete Route");
-        JButton viewDetailsBtn = new JButton("📋 View Details");
-        JButton saveDataBtn = new JButton("💾 Save Data");
+        JButton deleteLocationBtn = new JButton("Delete Location");
+        JButton deleteRouteBtn = new JButton("Delete Route");
+        JButton viewDetailsBtn = new JButton("View Details");
+        JButton saveDataBtn = new JButton("Save Data");
 
-        // Style buttons with clear visibility
-        styleSecondaryButtonForVisibility(addLocationBtn);
-        styleSecondaryButtonForVisibility(addRouteBtn);
-        styleSecondaryButtonForVisibility(findPathBtn);
-        styleSecondaryButtonForVisibility(refreshBtn);
-        styleSecondaryButtonForVisibility(deleteLocationBtn);
-        styleSecondaryButtonForVisibility(deleteRouteBtn);
-        styleSecondaryButtonForVisibility(viewDetailsBtn);
-        styleSecondaryButtonForVisibility(saveDataBtn);
+        // Style ALL buttons to have red text, white background, red border
+        styleRedTextButton(addLocationBtn);
+        styleRedTextButton(addRouteBtn);
+        styleRedTextButton(findPathBtn);
+        styleRedTextButton(refreshBtn);
+        styleRedTextButton(deleteLocationBtn);
+        styleRedTextButton(deleteRouteBtn);
+        styleRedTextButton(viewDetailsBtn);
+        styleRedTextButton(saveDataBtn);
 
         // Add buttons to panel
         buttonPanel.add(addLocationBtn);
@@ -98,28 +91,28 @@ public class LocationsPanel extends JPanel {
             system.showAddLocationDialog();
             refreshMap();
         });
-        
+
         addRouteBtn.addActionListener(e -> {
             system.showAddRouteDialog();
             refreshMap();
         });
-        
+
         findPathBtn.addActionListener(e -> system.showFindShortestPathDialog());
-        
+
         refreshBtn.addActionListener(e -> refreshMap());
-        
+
         deleteLocationBtn.addActionListener(e -> {
             system.showDeleteLocationDialog();
             refreshMap();
         });
-        
+
         deleteRouteBtn.addActionListener(e -> {
             system.showDeleteRouteDialog();
             refreshMap();
         });
-        
+
         viewDetailsBtn.addActionListener(e -> showLocationDetailsDialog());
-        
+
         saveDataBtn.addActionListener(e -> FileManager.showSaveDialog(system, LocationsPanel.this));
     }
 
@@ -127,9 +120,9 @@ public class LocationsPanel extends JPanel {
         JPanel h = UITheme.cardPanel(new BorderLayout());
         h.setOpaque(true);
 
-        JLabel title = new JLabel("🏫 LOCATIONS & ROUTES");
+        JLabel title = new JLabel("LOCATIONS & ROUTES");
         title.setFont(UITheme.titleFont(22));
-        title.setForeground(UITheme.ACCENT);
+        title.setForeground(UITheme.ACCENT); // Red text
 
         JLabel sub = new JLabel("Manage campus locations, routes and find shortest paths");
         sub.setFont(UITheme.bodyFont(14));
@@ -142,84 +135,76 @@ public class LocationsPanel extends JPanel {
 
     private void refreshMap() {
         mapArea.setText(system.campusMap.getGraphInfo());
-        mapArea.setForeground(Color.BLACK);
+        mapArea.setForeground(UITheme.TEXT_DARK);
         mapArea.setBackground(Color.WHITE);
+        mapArea.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UITheme.BORDER_COLOR, 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
     }
 
-    // Helper method to style buttons for maximum visibility
-    private void styleButtonForVisibility(JButton button) {
+    // ✅ NEW: Style button to have red text, white background, red border
+    private void styleRedTextButton(JButton button) {
         button.setOpaque(true);
         button.setContentAreaFilled(true);
-        button.setFocusPainted(true);
-        button.setBackground(UITheme.ACCENT);
-        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBackground(Color.WHITE);           // White background
+        button.setForeground(UITheme.ACCENT);       // Red text
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.ACCENT, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                BorderFactory.createLineBorder(UITheme.ACCENT, 2), // Red border
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
-    }
-    
-    private void styleSecondaryButtonForVisibility(JButton button) {
-        button.setOpaque(true);
-        button.setContentAreaFilled(true);
-        button.setFocusPainted(true);
-        button.setBackground(Color.WHITE);
-        button.setForeground(UITheme.ACCENT);
-        button.setFont(UITheme.headingFont(14));
-        button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     // Helper method to show location details
     private void showLocationDetailsDialog() {
         CustomArrayList<String> locations = system.campusMap.getAllNodes();
-        
+
         if (locations.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No locations in the map!");
             return;
         }
-        
+
         StringBuilder sb = new StringBuilder();
-        sb.append("📍 LOCATION DETAILS\n");
+        sb.append("LOCATION DETAILS\n");
         sb.append("══════════════════════════════════════\n\n");
-        
+
         sb.append("Total Locations: ").append(locations.size()).append("\n");
         sb.append("Total Routes: ").append(system.campusMap.getEdgeCount()).append("\n\n");
-        
-        sb.append("📊 Location Connectivity:\n");
+
+        sb.append("Location Connectivity:\n");
         sb.append("──────────────────────────\n");
-        
+
         for (int i = 0; i < locations.size(); i++) {
             String location = locations.get(i);
             sb.append("\n").append(i + 1).append(". ").append(location).append(":\n");
-            
+
             CustomArrayList<Graph.Edge> edges = system.campusMap.getEdges(location);
             if (edges != null && edges.size() > 0) {
                 for (int j = 0; j < edges.size(); j++) {
                     Graph.Edge edge = edges.get(j);
                     if (edge != null) {
                         sb.append("   → ").append(edge.destination)
-                          .append(" (").append(edge.distance).append(" min)\n");
+                                .append(" (").append(edge.distance).append(" min)\n");
                     }
                 }
             } else {
                 sb.append("   (isolated - no connections)\n");
             }
         }
-        
+
         JTextArea area = new JTextArea(sb.toString());
         area.setEditable(false);
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setForeground(Color.BLACK);
         area.setBackground(Color.WHITE);
         area.setMargin(new Insets(10, 10, 10, 10));
-        
+
         JOptionPane.showMessageDialog(
-            this, new JScrollPane(area),
-            "Location Details",
-            JOptionPane.INFORMATION_MESSAGE);
+                this, new JScrollPane(area),
+                "Location Details",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }

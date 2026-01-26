@@ -4,100 +4,72 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
-
-
-import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
+import javax.swing.*;
 
 public class UITheme {
-    // REDWOOD LIGHT THEME (warm, professional, accessible)
-    public static final Color ACCENT = new Color(165, 42, 42);        // Redwood (dark red-brown)
-    public static final Color ACCENT_LIGHT = new Color(220, 180, 180); // Soft redwood tint
-    public static final Color ACCENT_HOVER = new Color(139, 35, 35);   // Darker on hover
 
-    public static final Color BACKGROUND = new Color(253, 245, 240);   // Warm off-white (redwood light base)
-    public static final Color CARD_BG = Color.WHITE;                   // Clean white cards
-    public static final Color TEXT_DARK = new Color(40, 30, 30);       // Near-black for readability
-    public static final Color TEXT_LIGHT = Color.WHITE;
-
-    // Status colors (updated to match redwood theme)
-    public static final Color STATUS_PENDING = new Color(255, 230, 200);
-    public static final Color STATUS_ASSIGNED = new Color(220, 235, 250);
-    public static final Color STATUS_DELIVERED = new Color(220, 245, 232);
-    public static final Color STATUS_CANCELLED = new Color(240, 240, 240);
+    public static final Color ACCENT = new Color(165, 42, 42);
+    public static final Color BACKGROUND = new Color(253, 245, 240);
+    public static final Color TEXT_DARK = new Color(40, 30, 30);
+    public static final Color BORDER_COLOR = new Color(220, 210, 200);
 
     private UITheme() {}
 
     public static JPanel gradientPage(LayoutManager layout) {
         JPanel p = new JPanel(layout);
         p.setOpaque(true);
-        p.setBackground(BACKGROUND); // Warm background
+        p.setBackground(BACKGROUND);
         return p;
     }
 
     public static JPanel cardPanel(LayoutManager layout) {
         JPanel p = new JPanel(layout);
         p.setOpaque(true);
-        p.setBackground(CARD_BG);
+        p.setBackground(Color.WHITE);
         p.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 210, 200), 1),
+                BorderFactory.createLineBorder(BORDER_COLOR, 1),
                 BorderFactory.createEmptyBorder(16, 16, 16, 16)
         ));
         return p;
     }
 
-    public static void styleButton(JButton b) {
-        b.setFocusPainted(false);
-        b.setBackground(ACCENT);
-        b.setForeground(TEXT_LIGHT);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        b.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(ACCENT_HOVER, 2),
+    // Primary button (dark redwood, white text)
+    public static void styleButton(JButton button) {
+        button.setFocusPainted(false);
+        button.setBackground(ACCENT);
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(ACCENT.darker(), 2),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        b.setOpaque(true);
-        b.setContentAreaFilled(true);
-
-        // Hover effect
-        b.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                b.setBackground(ACCENT_HOVER);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                b.setBackground(ACCENT);
-            }
-        });
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
     }
 
-    public static void styleButtonSecondary(JButton b) {
-        b.setFocusPainted(false);
-        b.setBackground(ACCENT_LIGHT);
-        b.setForeground(ACCENT);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        b.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(ACCENT, 1),
+    // Secondary button — NOW DARK WITH WHITE TEXT
+    public static void styleButtonSecondary(JButton button) {
+        button.setFocusPainted(false);
+        button.setBackground(new Color(80, 20, 20)); // Dark redwood
+        button.setForeground(Color.WHITE);           // White text
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(100, 30, 30), 2), // Dark border
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        b.setOpaque(true);
-        b.setContentAreaFilled(true);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+    }
 
-        b.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                b.setBackground(ACCENT);
-                b.setForeground(TEXT_LIGHT);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                b.setBackground(ACCENT_LIGHT);
-                b.setForeground(ACCENT);
-            }
-        });
+    public static JTable styleTableHeader(JTable table) {
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setBackground(new Color(240, 240, 240));
+        table.getTableHeader().setForeground(TEXT_DARK);
+        table.getTableHeader().setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
+        return table;
     }
 
     public static Font titleFont(int size) { return new Font("Segoe UI", Font.BOLD, size); }

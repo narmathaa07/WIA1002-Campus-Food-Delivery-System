@@ -161,7 +161,7 @@ public class FoodDeliverySystem extends JPanel {
             }
 
             ridersById.put(id, new Rider(id, name, location));
-            JOptionPane.showMessageDialog(this, "✅ Rider added successfully!");
+            JOptionPane.showMessageDialog(this, " Rider added successfully!");
         }
     }
 
@@ -196,7 +196,7 @@ public class FoodDeliverySystem extends JPanel {
         rider.setStatus("Delivering");
 
         JOptionPane.showMessageDialog(this,
-                "✅ Order " + order.getOrderId() + " assigned to Rider " + rider.getRiderName());
+                " Order " + order.getOrderId() + " assigned to Rider " + rider.getRiderName());
     }
 
     // ✅ AUTO ASSIGN using NEAREST rider (shortest path by BFS hops)
@@ -277,29 +277,29 @@ public class FoodDeliverySystem extends JPanel {
         int totalSegments = segments1 + segments2;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("✅ AUTO ASSIGNMENT (Nearest Rider + Shortest Path)\n");
+        sb.append(" AUTO ASSIGNMENT (Nearest Rider + Shortest Path)\n");
         sb.append("══════════════════════════════════════\n\n");
 
-        sb.append("📦 ORDER:\n");
+        sb.append(" ORDER:\n");
         sb.append("Order ID: ").append(order.getOrderId()).append("\n");
         sb.append("Student: ").append(order.getStudentName()).append("\n");
         sb.append("Pickup: ").append(order.getPickupLocation()).append("\n");
         sb.append("Delivery: ").append(order.getDeliveryLocation()).append("\n");
         sb.append("Priority: ").append(order.getPriority() == 1 ? "URGENT" : "Normal").append("\n\n");
 
-        sb.append("🛵 NEAREST RIDER CHOSEN:\n");
+        sb.append(" NEAREST RIDER CHOSEN:\n");
         sb.append("Rider: ").append(nearestRider.getRiderName())
                 .append(" (").append(nearestRider.getRiderId()).append(")\n");
         sb.append("From: ").append(nearestRider.getCurrentLocation()).append("\n");
         sb.append("Distance to pickup: ").append(segments1).append(" segments\n\n");
 
-        sb.append("🗺️ ROUTE 1: Rider → Pickup (").append(segments1).append(" segments)\n");
+        sb.append(" ROUTE 1: Rider → Pickup (").append(segments1).append(" segments)\n");
         sb.append(formatPath(bestPathToPickup)).append("\n\n");
 
-        sb.append("🗺️ ROUTE 2: Pickup → Delivery (").append(segments2).append(" segments)\n");
+        sb.append(" ROUTE 2: Pickup → Delivery (").append(segments2).append(" segments)\n");
         sb.append(formatPath(pathPickupToDelivery)).append("\n\n");
 
-        sb.append("⏱️ ESTIMATION:\n");
+        sb.append(" ESTIMATION:\n");
         sb.append("Total segments: ").append(totalSegments).append("\n");
         sb.append("Estimated time: ").append(totalSegments * 3).append(" minutes (3 min/segment)\n");
 
@@ -361,7 +361,7 @@ public void deleteRider(String riderId) {
     if (confirm == JOptionPane.YES_OPTION) {
         ridersById.remove(riderId);
         JOptionPane.showMessageDialog(this, 
-            "✅ Rider " + riderId + " deleted successfully!");
+            " Rider " + riderId + " deleted successfully!");
     }
 }
     
@@ -412,7 +412,7 @@ public void deleteRider(String riderId) {
         allOrders.add(order);
         pendingOrders.enqueue(order);
 
-        JOptionPane.showMessageDialog(this, "✅ Order created successfully!");
+        JOptionPane.showMessageDialog(this, " Order created successfully!");
     }
 
  public void cancelSelectedOrder(JTable table) {
@@ -482,7 +482,7 @@ public void completeSelectedOrder(JTable table) {
             }
             
             campusMap.addNode(location);
-            JOptionPane.showMessageDialog(this, "✅ Location '" + location + "' added successfully!");
+            JOptionPane.showMessageDialog(this, " Location '" + location + "' added successfully!");
         }
     }
 
@@ -519,7 +519,7 @@ public void completeSelectedOrder(JTable table) {
                 
                 campusMap.addEdge(from, to, distance);
                 JOptionPane.showMessageDialog(this, 
-                    "✅ Route added: " + from + " ↔ " + to + " (" + distance + " min)");
+                    " Route added: " + from + " ↔ " + to + " (" + distance + " min)");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Distance must be a number!");
             }
@@ -565,13 +565,13 @@ public void completeSelectedOrder(JTable table) {
 
             if (path == null || path.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    "❌ No path found between " + from + " and " + to + "!");
+                    " No path found between " + from + " and " + to + "!");
                 return;
             }
 
             // Display path in a nice dialog
             StringBuilder sb = new StringBuilder();
-            sb.append("📍 SHORTEST PATH: ").append(from).append(" → ").append(to).append("\n");
+            sb.append(" SHORTEST PATH: ").append(from).append(" → ").append(to).append("\n");
             sb.append("══════════════════════════════════════\n\n");
 
             sb.append("Path (").append(path.size() - 1).append(" segments):\n");
@@ -582,7 +582,7 @@ public void completeSelectedOrder(JTable table) {
                 }
             }
 
-            sb.append("\n\n📊 Path Details:\n");
+            sb.append("\n\n Path Details:\n");
             sb.append("• Total locations: ").append(path.size()).append("\n");
             sb.append("• Segments to travel: ").append(path.size() - 1).append("\n");
             sb.append("• Estimated time: ").append((path.size() - 1) * 3).append(" minutes (3 min/segment)\n");
@@ -647,13 +647,13 @@ public void completeSelectedOrder(JTable table) {
                 boolean deleted = campusMap.deleteNode(location);
                 if (deleted) {
                     JOptionPane.showMessageDialog(this, 
-                        "✅ Location '" + location + "' deleted successfully!");
+                        " Location '" + location + "' deleted successfully!");
                     
                     // Also update any riders at this location
                     updateRidersAfterLocationDeletion(location);
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                        "❌ Failed to delete location '" + location + "'!");
+                        " Failed to delete location '" + location + "'!");
                 }
             }
         }
@@ -704,10 +704,10 @@ public void completeSelectedOrder(JTable table) {
             boolean deleted = campusMap.deleteEdge(from, to);
             if (deleted) {
                 JOptionPane.showMessageDialog(this, 
-                    "✅ Route deleted: " + from + " ↔ " + to);
+                    " Route deleted: " + from + " ↔ " + to);
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "❌ Failed to delete route!");
+                    " Failed to delete route!");
             }
         }
     }
@@ -748,7 +748,7 @@ public void completeSelectedOrder(JTable table) {
             
             if (movedCount > 0) {
                 JOptionPane.showMessageDialog(this,
-                    "⚠️ " + movedCount + " rider(s) were at deleted location.\n" +
+                    " " + movedCount + " rider(s) were at deleted location.\n" +
                     "They have been moved to another location.");
             }
         }
