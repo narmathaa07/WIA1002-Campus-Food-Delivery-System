@@ -4,18 +4,8 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
-
-
-
-
-
 import javax.swing.*;
 import java.awt.*;
-
 
 public class MainFrame extends JFrame {
 
@@ -28,11 +18,10 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle("Campus Food Delivery Management System");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
 
-        // Create menu bar
         createMenuBar();
 
         cardLayout = new CardLayout();
@@ -42,15 +31,18 @@ public class MainFrame extends JFrame {
         // 1) Welcome Page
         root.add(new WelcomePanel(this), WELCOME);
 
-        // 2) Full System UI
+        // 2) Create system panel BUT DON'T INITIALIZE DATA YET
         systemPanel = new FoodDeliverySystem();
+
+        // 👇 CRITICAL: Load data BEFORE adding to UI
+        boolean loaded = FileManager.loadAllData(systemPanel);
+
         root.add(systemPanel, SYSTEM);
 
         setContentPane(root);
 
-        showWelcome(); // show welcome first
-        
-        // Add window listener for auto-save prompt
+        showWelcome();
+
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -71,12 +63,12 @@ public class MainFrame extends JFrame {
         fileMenu.setBackground(UITheme.ACCENT);
         fileMenu.setOpaque(true);
 
-        JMenuItem saveItem = new JMenuItem(" Save All Data (CSV)");
-        JMenuItem openExcelItem = new JMenuItem(" Open in Excel");
-        JMenuItem exportItem = new JMenuItem(" Export to CSV");
-        JMenuItem fileLocationsItem = new JMenuItem(" View File Locations");
-        JMenuItem backupInfoItem = new JMenuItem(" View Backups");
-        JMenuItem exitItem = new JMenuItem(" Exit");
+        JMenuItem saveItem = new JMenuItem("Save All Data (CSV)");
+        JMenuItem openExcelItem = new JMenuItem("Open in Excel");
+        JMenuItem exportItem = new JMenuItem("Export to CSV");
+        JMenuItem fileLocationsItem = new JMenuItem("View File Locations");
+        JMenuItem backupInfoItem = new JMenuItem("View Backups");
+        JMenuItem exitItem = new JMenuItem("Exit");
 
         // Style menu items
         styleMenuItem(saveItem);
@@ -130,7 +122,6 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    // Helper to style menu items
     private void styleMenuItem(JMenuItem item) {
         item.setFont(UITheme.bodyFont(12));
         item.setBackground(Color.WHITE);
@@ -138,26 +129,26 @@ public class MainFrame extends JFrame {
         item.setOpaque(true);
         item.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
     }
-    
+
     private void refreshUI() {
         CardLayout cl = (CardLayout) root.getLayout();
         cl.show(root, SYSTEM);
     }
-    
+
     private void exitApplication() {
         int choice = JOptionPane.showConfirmDialog(this,
                 "Would you like to save before exiting?\n\n" +
-                "Yes - Save and exit\n" +
-                "No - Exit without saving\n" +
-                "Cancel - Return to application",
+                        "Yes - Save and exit\n" +
+                        "No - Exit without saving\n" +
+                        "Cancel - Return to application",
                 "Exit Application",
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
-        
+
         if (choice == JOptionPane.YES_OPTION) {
             boolean saved = FileManager.saveAllData(systemPanel);
             if (saved) {
-                JOptionPane.showMessageDialog(this, "Data saved. Goodbye!", "Exit", JOptionPane.INFORMATION_MESSAGE);
+                // JOptionPane.showMessageDialog(this, "Data saved. Goodbye!", "Exit", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to save data!", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -167,18 +158,17 @@ public class MainFrame extends JFrame {
         }
         // Cancel - do nothing, window closing will be cancelled
     }
-    
+
     private void showAboutDialog() {
         JOptionPane.showMessageDialog(this,
                 "Campus Food Delivery Management System\n" +
-                "Version 2.0\n\n" +
-                "Features:\n" +
-                "• Location and Route Management\n" +
-                "• Order Processing with Priority Queue\n" +
-                "• Rider Assignment and Tracking\n" +
-                "• Email Notifications\n" +
-                "• File Persistence (Save/Load)\n\n" +
-                "© 2024 Campus Food Delivery",
+                        "Version 2.0\n\n" +
+                        "Features:\n" +
+                        "• Location and Route Management\n" +
+                        "• Order Processing with Priority Queue\n" +
+                        "• Rider Assignment and Tracking\n" +
+                        "• File Persistence (Save/Load)\n\n" +
+                        "© 2024 Campus Food Delivery",
                 "About",
                 JOptionPane.INFORMATION_MESSAGE);
     }

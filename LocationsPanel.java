@@ -92,8 +92,9 @@ public class LocationsPanel extends JPanel {
             refreshMap();
         });
 
+        // ✅ UPDATED: Use dropdown-based route dialog
         addRouteBtn.addActionListener(e -> {
-            system.showAddRouteDialog();
+            showAddRouteWithDropdowns();
             refreshMap();
         });
 
@@ -206,5 +207,60 @@ public class LocationsPanel extends JPanel {
                 this, new JScrollPane(area),
                 "Location Details",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ✅ NEW: Add route dialog with dropdowns
+    private void showAddRouteWithDropdowns() {
+        // Get all locations from the graph
+        CustomArrayList<String> locations = system.campusMap.getAllNodes();
+
+        if (locations == null || locations.size() == 0) {
+            JOptionPane.showMessageDialog(this, "No locations found! Add locations first.");
+            return;
+        }
+
+        // Create combo boxes with locations
+        String[] locArray = new String[locations.size()];
+        for (int i = 0; i < locations.size(); i++) {
+            locArray[i] = locations.get(i);
+        }
+
+        JComboBox<String> fromCombo = new JComboBox<>(locArray);
+        JComboBox<String> toCombo = new JComboBox<>(locArray);
+        JTextField distanceField = new JTextField("1");
+
+        Object[] message = {
+                "From Location:", fromCombo,
+                "To Location:", toCombo,
+                "Distance (in minutes):", distanceField
+        };
+
+        int option = JOptionPane.showConfirmDialog(
+                this, message, "Add New Route", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String from = (String) fromCombo.getSelectedItem();
+            String to = (String) toCombo.getSelectedItem();
+            String distanceStr = distanceField.getText().trim();
+
+            if (from.isEmpty() || to.isEmpty() || distanceStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required!");
+                return;
+            }
+
+            try {
+                int distance = Integer.parseInt(distanceStr);
+                if (distance <= 0) {
+                    JOptionPane.showMessageDialog(this, "Distance must be positive!");
+                    return;
+                }
+
+                system.campusMap.addEdge(from, to, distance);
+                JOptionPane.showMessageDialog(this,
+                        "✅ Route added: " + from + " ↔ " + to + " (" + distance + " min)");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Distance must be a number!");
+            }
+        }
     }
 }

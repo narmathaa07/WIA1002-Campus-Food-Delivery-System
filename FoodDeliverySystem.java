@@ -4,19 +4,6 @@
  */
 package com.mycompany.fooddelivery3;
 
-/**
- *
- * @author ASUS
- */
-
-
-/**
- *
- * @author ASUS
- */
-
-
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -38,7 +25,7 @@ public class FoodDeliverySystem extends JPanel {
         pendingOrders = new PriorityQueue(100);
         allOrders = new CustomArrayList<>(100);
 
-        addSampleData();
+        // DO NOT add sample data here - let saved data load instead
         initGUI();
     }
 
@@ -136,10 +123,24 @@ public class FoodDeliverySystem extends JPanel {
         JTextField nameField = new JTextField();
         JTextField locationField = new JTextField();
 
+        // Get all locations for dropdown
+        CustomArrayList<String> locations = campusMap.getAllNodes();
+        JComboBox<String> locationCombo;
+
+        if (locations != null && locations.size() > 0) {
+            String[] locArray = new String[locations.size()];
+            for (int i = 0; i < locations.size(); i++) {
+                locArray[i] = locations.get(i);
+            }
+            locationCombo = new JComboBox<>(locArray);
+        } else {
+            locationCombo = new JComboBox<>(new String[]{"Hostel", "Library", "Cafe"});
+        }
+
         Object[] message = {
                 "Rider ID:", idField,
                 "Rider Name:", nameField,
-                "Current Location:", locationField
+                "Current Location:", locationCombo
         };
 
         int option = JOptionPane.showConfirmDialog(
@@ -148,7 +149,7 @@ public class FoodDeliverySystem extends JPanel {
         if (option == JOptionPane.OK_OPTION) {
             String id = idField.getText().trim();
             String name = nameField.getText().trim();
-            String location = locationField.getText().trim();
+            String location = locationCombo.getSelectedItem().toString().trim();
 
             if (id.isEmpty() || name.isEmpty() || location.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required!");
@@ -161,7 +162,7 @@ public class FoodDeliverySystem extends JPanel {
             }
 
             ridersById.put(id, new Rider(id, name, location));
-            JOptionPane.showMessageDialog(this, " Rider added successfully!");
+            JOptionPane.showMessageDialog(this, "Rider added successfully!");
         }
     }
 
@@ -171,32 +172,84 @@ public class FoodDeliverySystem extends JPanel {
             return;
         }
 
-        String orderId = JOptionPane.showInputDialog(this, "Enter Order ID to assign:");
-        if (orderId == null || orderId.trim().isEmpty())
-            return;
+        // Get all pending orders for dropdown
+        CustomArrayList<String> pendingOrderIds = new CustomArrayList<>(50);
+        for (int i = 0; i < allOrders.size(); i++) {
+            Order o = allOrders.get(i);
+            if (o != null && "Pending".equals(o.getStatus())) {
+                pendingOrderIds.add(o.getOrderId());
+            }
+        }
 
-        Order order = ordersById.get(orderId);
-        if (order == null || !"Pending".equals(order.getStatus())) {
-            JOptionPane.showMessageDialog(this, "Invalid or non-pending order.");
+        JComboBox<String> orderCombo;
+        if (pendingOrderIds.size() > 0) {
+            String[] orderArray = new String[pendingOrderIds.size()];
+            for (int i = 0; i < pendingOrderIds.size(); i++) {
+                orderArray[i] = pendingOrderIds.get(i);
+            }
+            orderCombo = new JComboBox<>(orderArray);
+        } else {
+            JOptionPane.showMessageDialog(this, "No pending orders available.");
             return;
         }
 
-        String riderId = JOptionPane.showInputDialog(this, "Enter Available Rider ID:");
-        if (riderId == null || riderId.trim().isEmpty())
-            return;
+        // Get available riders for dropdown
+        CustomArrayList<String> availableRiders = new CustomArrayList<>(50);
+        CustomHashMap.Entry<String, Rider>[] entries = ridersById.entries();
+        if (entries != null) {
+            for (int i = 0; i < entries.length; i++) {
+                if (entries[i] != null && entries[i].value != null &&
+                        "Available".equals(entries[i].value.getStatus())) {
+                    availableRiders.add(entries[i].value.getRiderId() + " - " + entries[i].value.getRiderName());
+                }
+            }
+        }
 
-        Rider rider = ridersById.get(riderId);
-        if (rider == null || !"Available".equals(rider.getStatus())) {
-            JOptionPane.showMessageDialog(this, "Rider not available.");
+        JComboBox<String> riderCombo;
+        if (availableRiders.size() > 0) {
+            String[] riderArray = new String[availableRiders.size()];
+            for (int i = 0; i < availableRiders.size(); i++) {
+                riderArray[i] = availableRiders.get(i);
+            }
+            riderCombo = new JComboBox<>(riderArray);
+        } else {
+            JOptionPane.showMessageDialog(this, "No available riders found!");
             return;
         }
 
-        order.setStatus("Assigned");
-        order.setAssignedRiderId(rider.getRiderId());
-        rider.setStatus("Delivering");
+        Object[] message = {
+                "Select Order:", orderCombo,
+                "Select Rider:", riderCombo
+        };
 
-        JOptionPane.showMessageDialog(this,
-                " Order " + order.getOrderId() + " assigned to Rider " + rider.getRiderName());
+        int option = JOptionPane.showConfirmDialog(
+                this, message, "Manual Assignment", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String orderId = orderCombo.getSelectedItem().toString();
+            String riderSelection = riderCombo.getSelectedItem().toString();
+            String riderId = riderSelection.split(" - ")[0];
+
+            Order order = ordersById.get(orderId);
+            Rider rider = ridersById.get(riderId);
+
+            if (order == null || !"Pending".equals(order.getStatus())) {
+                JOptionPane.showMessageDialog(this, "Invalid or non-pending order.");
+                return;
+            }
+
+            if (rider == null || !"Available".equals(rider.getStatus())) {
+                JOptionPane.showMessageDialog(this, "Rider not available.");
+                return;
+            }
+
+            order.setStatus("Assigned");
+            order.setAssignedRiderId(rider.getRiderId());
+            rider.setStatus("Delivering");
+
+            JOptionPane.showMessageDialog(this,
+                    "Order " + order.getOrderId() + " assigned to Rider " + rider.getRiderName());
+        }
     }
 
     // ✅ AUTO ASSIGN using NEAREST rider (shortest path by BFS hops)
@@ -277,29 +330,29 @@ public class FoodDeliverySystem extends JPanel {
         int totalSegments = segments1 + segments2;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(" AUTO ASSIGNMENT (Nearest Rider + Shortest Path)\n");
+        sb.append("AUTO ASSIGNMENT (Nearest Rider + Shortest Path)\n");
         sb.append("══════════════════════════════════════\n\n");
 
-        sb.append(" ORDER:\n");
+        sb.append("ORDER:\n");
         sb.append("Order ID: ").append(order.getOrderId()).append("\n");
         sb.append("Student: ").append(order.getStudentName()).append("\n");
         sb.append("Pickup: ").append(order.getPickupLocation()).append("\n");
         sb.append("Delivery: ").append(order.getDeliveryLocation()).append("\n");
         sb.append("Priority: ").append(order.getPriority() == 1 ? "URGENT" : "Normal").append("\n\n");
 
-        sb.append(" NEAREST RIDER CHOSEN:\n");
+        sb.append("NEAREST RIDER CHOSEN:\n");
         sb.append("Rider: ").append(nearestRider.getRiderName())
                 .append(" (").append(nearestRider.getRiderId()).append(")\n");
         sb.append("From: ").append(nearestRider.getCurrentLocation()).append("\n");
         sb.append("Distance to pickup: ").append(segments1).append(" segments\n\n");
 
-        sb.append(" ROUTE 1: Rider → Pickup (").append(segments1).append(" segments)\n");
+        sb.append("ROUTE 1: Rider → Pickup (").append(segments1).append(" segments)\n");
         sb.append(formatPath(bestPathToPickup)).append("\n\n");
 
-        sb.append(" ROUTE 2: Pickup → Delivery (").append(segments2).append(" segments)\n");
+        sb.append("ROUTE 2: Pickup → Delivery (").append(segments2).append(" segments)\n");
         sb.append(formatPath(pathPickupToDelivery)).append("\n\n");
 
-        sb.append(" ESTIMATION:\n");
+        sb.append("ESTIMATION:\n");
         sb.append("Total segments: ").append(totalSegments).append("\n");
         sb.append("Estimated time: ").append(totalSegments * 3).append(" minutes (3 min/segment)\n");
 
@@ -327,51 +380,65 @@ public class FoodDeliverySystem extends JPanel {
 
     // ======================= RIDER DELETE METHOD =======================
 
-public void deleteRider(String riderId) {
-    if (riderId == null || riderId.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Invalid rider ID!");
-        return;
+    public void deleteRider(String riderId) {
+        if (riderId == null || riderId.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Invalid rider ID!");
+            return;
+        }
+
+        Rider rider = ridersById.get(riderId);
+        if (rider == null) {
+            JOptionPane.showMessageDialog(this, "Rider not found!");
+            return;
+        }
+
+        // Check if rider is currently delivering
+        if ("Delivering".equals(rider.getStatus())) {
+            JOptionPane.showMessageDialog(this,
+                    "Cannot delete rider " + riderId + "!\n" +
+                            "This rider is currently delivering an order.\n" +
+                            "Complete the order first or reassign it.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete rider " + riderId + "?\n" +
+                        "Name: " + rider.getRiderName() + "\n" +
+                        "Location: " + rider.getCurrentLocation() + "\n" +
+                        "This action cannot be undone!",
+                "Confirm Rider Deletion",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            ridersById.remove(riderId);
+            JOptionPane.showMessageDialog(this,
+                    "Rider " + riderId + " deleted successfully!");
+        }
     }
-    
-    Rider rider = ridersById.get(riderId);
-    if (rider == null) {
-        JOptionPane.showMessageDialog(this, "Rider not found!");
-        return;
-    }
-    
-    // Check if rider is currently delivering
-    if ("Delivering".equals(rider.getStatus())) {
-        JOptionPane.showMessageDialog(this, 
-            "Cannot delete rider " + riderId + "!\n" +
-            "This rider is currently delivering an order.\n" +
-            "Complete the order first or reassign it.");
-        return;
-    }
-    
-    int confirm = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to delete rider " + riderId + "?\n" +
-        "Name: " + rider.getRiderName() + "\n" +
-        "Location: " + rider.getCurrentLocation() + "\n" +
-        "This action cannot be undone!",
-        "Confirm Rider Deletion",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.WARNING_MESSAGE);
-    
-    if (confirm == JOptionPane.YES_OPTION) {
-        ridersById.remove(riderId);
-        JOptionPane.showMessageDialog(this, 
-            " Rider " + riderId + " deleted successfully!");
-    }
-}
-    
-    
+
+
     public void showCreateOrderDialog() {
         JTextField idField = new JTextField();
         JTextField nameField = new JTextField();
         JTextField emailField = new JTextField();
-        JTextField pickupField = new JTextField();
-        JTextField deliveryField = new JTextField();
+
+        // Get locations for dropdowns
+        CustomArrayList<String> locations = campusMap.getAllNodes();
+        JComboBox<String> pickupCombo, deliveryCombo;
+
+        if (locations != null && locations.size() > 0) {
+            String[] locArray = new String[locations.size()];
+            for (int i = 0; i < locations.size(); i++) {
+                locArray[i] = locations.get(i);
+            }
+            pickupCombo = new JComboBox<>(locArray);
+            deliveryCombo = new JComboBox<>(locArray);
+        } else {
+            pickupCombo = new JComboBox<>(new String[]{"Hostel", "Library"});
+            deliveryCombo = new JComboBox<>(new String[]{"Cafe", "Block A"});
+        }
 
         JComboBox<String> priorityBox = new JComboBox<>(new String[] { "1 - Urgent", "2 - Normal" });
 
@@ -379,8 +446,8 @@ public void deleteRider(String riderId) {
                 "Order ID:", idField,
                 "Student Name:", nameField,
                 "Student Email:", emailField,
-                "Pickup Location:", pickupField,
-                "Delivery Location:", deliveryField,
+                "Pickup Location:", pickupCombo,
+                "Delivery Location:", deliveryCombo,
                 "Priority:", priorityBox
         };
 
@@ -392,8 +459,8 @@ public void deleteRider(String riderId) {
         String id = idField.getText().trim();
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
-        String pickup = pickupField.getText().trim();
-        String delivery = deliveryField.getText().trim();
+        String pickup = pickupCombo.getSelectedItem().toString().trim();
+        String delivery = deliveryCombo.getSelectedItem().toString().trim();
         int priority = priorityBox.getSelectedIndex() + 1;
 
         if (id.isEmpty() || name.isEmpty() || email.isEmpty() || pickup.isEmpty() || delivery.isEmpty()) {
@@ -412,124 +479,86 @@ public void deleteRider(String riderId) {
         allOrders.add(order);
         pendingOrders.enqueue(order);
 
-        JOptionPane.showMessageDialog(this, " Order created successfully!");
+        JOptionPane.showMessageDialog(this, "Order created successfully!");
     }
 
- public void cancelSelectedOrder(JTable table) {
-    int row = table.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Select an order first.");
-        return;
-    }
-
-    // Convert view row index to model row index (for sorting/filtering)
-    int modelRow = table.convertRowIndexToModel(row);
-    String orderId = table.getModel().getValueAt(modelRow, 0).toString();
-    Order order = ordersById.get(orderId);
-    if (order == null)
-        return;
-
-    order.setStatus("Cancelled");
-    JOptionPane.showMessageDialog(this, "✖ Order " + orderId + " cancelled.");
-}
-
-public void completeSelectedOrder(JTable table) {
-    int row = table.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Select an order first.");
-        return;
-    }
-
-    // Convert view row index to model row index (for sorting/filtering)
-    int modelRow = table.convertRowIndexToModel(row);
-    String orderId = table.getModel().getValueAt(modelRow, 0).toString();
-    Order order = ordersById.get(orderId);
-    if (order == null)
-        return;
-
-    order.setStatus("Delivered");
-
-    // Update rider status if assigned
-    if (order.getAssignedRiderId() != null) {
-        Rider rider = ridersById.get(order.getAssignedRiderId());
-        if (rider != null) {
-            rider.setStatus("Available");
-            rider.setCurrentLocation(order.getDeliveryLocation());
+    public void cancelSelectedOrder(JTable table) {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select an order first.");
+            return;
         }
+
+        // Convert view row index to model row index (for sorting/filtering)
+        int modelRow = table.convertRowIndexToModel(row);
+        String orderId = table.getModel().getValueAt(modelRow, 0).toString();
+        Order order = ordersById.get(orderId);
+        if (order == null)
+            return;
+
+        order.setStatus("Cancelled");
+        JOptionPane.showMessageDialog(this, "✖ Order " + orderId + " cancelled.");
     }
 
-    JOptionPane.showMessageDialog(this, "✔ Order " + orderId + " marked Delivered.");
-}
+    public void completeSelectedOrder(JTable table) {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select an order first.");
+            return;
+        }
+
+        // Convert view row index to model row index (for sorting/filtering)
+        int modelRow = table.convertRowIndexToModel(row);
+        String orderId = table.getModel().getValueAt(modelRow, 0).toString();
+        Order order = ordersById.get(orderId);
+        if (order == null)
+            return;
+
+        order.setStatus("Delivered");
+
+        // Update rider status if assigned
+        if (order.getAssignedRiderId() != null) {
+            Rider rider = ridersById.get(order.getAssignedRiderId());
+            if (rider != null) {
+                rider.setStatus("Available");
+                rider.setCurrentLocation(order.getDeliveryLocation());
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, "✔ Order " + orderId + " marked Delivered.");
+    }
 
     // ======================= LOCATION MANAGEMENT METHODS =======================
 
     public void showAddLocationDialog() {
         JTextField locationField = new JTextField();
-        
+
         Object[] message = {
-            "Enter new location name:",
-            locationField
+                "Enter new location name:",
+                locationField
         };
-        
+
         int option = JOptionPane.showConfirmDialog(
                 this, message, "Add New Location", JOptionPane.OK_CANCEL_OPTION);
-        
+
         if (option == JOptionPane.OK_OPTION) {
             String location = locationField.getText().trim();
             if (location.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Location name cannot be empty!");
                 return;
             }
-            
+
             campusMap.addNode(location);
-            JOptionPane.showMessageDialog(this, " Location '" + location + "' added successfully!");
+            JOptionPane.showMessageDialog(this, "Location '" + location + "' added successfully!");
         }
     }
 
-    public void showAddRouteDialog() {
-        JTextField fromField = new JTextField();
-        JTextField toField = new JTextField();
-        JTextField distanceField = new JTextField("1");
-        
-        Object[] message = {
-            "From Location:", fromField,
-            "To Location:", toField,
-            "Distance (in minutes):", distanceField
-        };
-        
-        int option = JOptionPane.showConfirmDialog(
-                this, message, "Add New Route", JOptionPane.OK_CANCEL_OPTION);
-        
-        if (option == JOptionPane.OK_OPTION) {
-            String from = fromField.getText().trim();
-            String to = toField.getText().trim();
-            String distanceStr = distanceField.getText().trim();
-            
-            if (from.isEmpty() || to.isEmpty() || distanceStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "All fields are required!");
-                return;
-            }
-            
-            try {
-                int distance = Integer.parseInt(distanceStr);
-                if (distance <= 0) {
-                    JOptionPane.showMessageDialog(this, "Distance must be positive!");
-                    return;
-                }
-                
-                campusMap.addEdge(from, to, distance);
-                JOptionPane.showMessageDialog(this, 
-                    " Route added: " + from + " ↔ " + to + " (" + distance + " min)");
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Distance must be a number!");
-            }
-        }
-    }
+    // ✅ REMOVED: showAddRouteDialog() - now handled by LocationsPanel
 
     public void showFindShortestPathDialog() {
         // Get all locations from the graph
         CustomArrayList<String> locations = campusMap.getAllNodes();
-        
+
         if (locations == null || locations.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No locations found! Add locations first.");
             return;
@@ -545,8 +574,8 @@ public void completeSelectedOrder(JTable table) {
         JComboBox<String> toCombo = new JComboBox<>(locArray);
 
         Object[] message = {
-            "From Location:", fromCombo,
-            "To Location:", toCombo
+                "From Location:", fromCombo,
+                "To Location:", toCombo
         };
 
         int option = JOptionPane.showConfirmDialog(
@@ -564,14 +593,14 @@ public void completeSelectedOrder(JTable table) {
             CustomArrayList<String> path = campusMap.findShortestPath(from, to);
 
             if (path == null || path.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    " No path found between " + from + " and " + to + "!");
+                JOptionPane.showMessageDialog(this,
+                        "No path found between " + from + " and " + to + "!");
                 return;
             }
 
             // Display path in a nice dialog
             StringBuilder sb = new StringBuilder();
-            sb.append(" SHORTEST PATH: ").append(from).append(" → ").append(to).append("\n");
+            sb.append("SHORTEST PATH: ").append(from).append(" → ").append(to).append("\n");
             sb.append("══════════════════════════════════════\n\n");
 
             sb.append("Path (").append(path.size() - 1).append(" segments):\n");
@@ -582,7 +611,7 @@ public void completeSelectedOrder(JTable table) {
                 }
             }
 
-            sb.append("\n\n Path Details:\n");
+            sb.append("\nPath Details:\n");
             sb.append("• Total locations: ").append(path.size()).append("\n");
             sb.append("• Segments to travel: ").append(path.size() - 1).append("\n");
             sb.append("• Estimated time: ").append((path.size() - 1) * 3).append(" minutes (3 min/segment)\n");
@@ -593,67 +622,66 @@ public void completeSelectedOrder(JTable table) {
             area.setMargin(new Insets(10, 10, 10, 10));
 
             JOptionPane.showMessageDialog(
-                this, new JScrollPane(area),
-                "Shortest Path Result",
-                JOptionPane.INFORMATION_MESSAGE);
+                    this, new JScrollPane(area),
+                    "Shortest Path Result",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     // ======================= DELETE LOCATION/ROUTE METHODS =======================
-    // THESE ARE THE MISSING METHODS THAT ARE CAUSING THE ERROR
 
     public void showDeleteLocationDialog() {
         // Get all locations
         CustomArrayList<String> locations = campusMap.getAllNodes();
-        
+
         if (locations.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No locations to delete!");
             return;
         }
-        
+
         // Create combo box with locations
         String[] locArray = new String[locations.size()];
         for (int i = 0; i < locations.size(); i++) {
             locArray[i] = locations.get(i);
         }
-        
+
         JComboBox<String> locationCombo = new JComboBox<>(locArray);
-        
+
         // Warning message
         JLabel warning = new JLabel("<html><font color='red'><b>Warning:</b> This will delete ALL routes connected to this location!</font></html>");
-        
+
         Object[] message = {
-            "Select location to delete:",
-            locationCombo,
-            warning
+                "Select location to delete:",
+                locationCombo,
+                warning
         };
-        
+
         int option = JOptionPane.showConfirmDialog(
                 this, message, "Delete Location", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        
+
         if (option == JOptionPane.OK_OPTION) {
             String location = (String) locationCombo.getSelectedItem();
-            
+
             // Ask for confirmation
             int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to delete '" + location + "' and ALL connected routes?\nThis action cannot be undone!",
-                "Confirm Deletion",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-            
+                    this,
+                    "Are you sure you want to delete '" + location + "' and ALL connected routes?\nThis action cannot be undone!",
+                    "Confirm Deletion",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
             if (confirm == JOptionPane.YES_OPTION) {
                 boolean deleted = campusMap.deleteNode(location);
                 if (deleted) {
-                    JOptionPane.showMessageDialog(this, 
-                        " Location '" + location + "' deleted successfully!");
-                    
+                    JOptionPane.showMessageDialog(this,
+                            "Location '" + location + "' deleted successfully!");
+
                     // Also update any riders at this location
                     updateRidersAfterLocationDeletion(location);
                 } else {
-                    JOptionPane.showMessageDialog(this, 
-                        " Failed to delete location '" + location + "'!");
+                    JOptionPane.showMessageDialog(this,
+                            "Failed to delete location '" + location + "'!");
                 }
             }
         }
@@ -662,52 +690,52 @@ public void completeSelectedOrder(JTable table) {
     public void showDeleteRouteDialog() {
         // Get all locations
         CustomArrayList<String> locations = campusMap.getAllNodes();
-        
+
         if (locations.size() < 2) {
             JOptionPane.showMessageDialog(this, "Need at least 2 locations to delete a route!");
             return;
         }
-        
+
         // Create combo boxes
         String[] locArray = new String[locations.size()];
         for (int i = 0; i < locations.size(); i++) {
             locArray[i] = locations.get(i);
         }
-        
+
         JComboBox<String> fromCombo = new JComboBox<>(locArray);
         JComboBox<String> toCombo = new JComboBox<>(locArray);
-        
+
         Object[] message = {
-            "From Location:", fromCombo,
-            "To Location:", toCombo
+                "From Location:", fromCombo,
+                "To Location:", toCombo
         };
-        
+
         int option = JOptionPane.showConfirmDialog(
                 this, message, "Delete Route", JOptionPane.OK_CANCEL_OPTION);
-        
+
         if (option == JOptionPane.OK_OPTION) {
             String from = (String) fromCombo.getSelectedItem();
             String to = (String) toCombo.getSelectedItem();
-            
+
             if (from.equals(to)) {
                 JOptionPane.showMessageDialog(this, "Cannot delete route to same location!");
                 return;
             }
-            
+
             // Check if route exists
             if (!routeExists(from, to)) {
-                JOptionPane.showMessageDialog(this, 
-                    "No route exists between " + from + " and " + to + "!");
+                JOptionPane.showMessageDialog(this,
+                        "No route exists between " + from + " and " + to + "!");
                 return;
             }
-            
+
             boolean deleted = campusMap.deleteEdge(from, to);
             if (deleted) {
-                JOptionPane.showMessageDialog(this, 
-                    " Route deleted: " + from + " ↔ " + to);
+                JOptionPane.showMessageDialog(this,
+                        "Route deleted: " + from + " ↔ " + to);
             } else {
-                JOptionPane.showMessageDialog(this, 
-                    " Failed to delete route!");
+                JOptionPane.showMessageDialog(this,
+                        "Failed to delete route!");
             }
         }
     }
@@ -745,11 +773,11 @@ public void completeSelectedOrder(JTable table) {
                     }
                 }
             }
-            
+
             if (movedCount > 0) {
                 JOptionPane.showMessageDialog(this,
-                    " " + movedCount + " rider(s) were at deleted location.\n" +
-                    "They have been moved to another location.");
+                        movedCount + " rider(s) were at deleted location.\n" +
+                                "They have been moved to another location.");
             }
         }
     }
