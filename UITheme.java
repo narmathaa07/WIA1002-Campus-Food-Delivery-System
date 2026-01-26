@@ -15,91 +15,92 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public class UITheme {
+    // REDWOOD LIGHT THEME (warm, professional, accessible)
+    public static final Color ACCENT = new Color(165, 42, 42);        // Redwood (dark red-brown)
+    public static final Color ACCENT_LIGHT = new Color(220, 180, 180); // Soft redwood tint
+    public static final Color ACCENT_HOVER = new Color(139, 35, 35);   // Darker on hover
 
-    // Main theme colors - HIGH CONTRAST
-    public static final Color GREEN_DARK = new Color(0, 100, 0);        // Darker green
-    public static final Color GREEN = new Color(0, 150, 0);             // Medium green
-    public static final Color GREEN_LIGHT = new Color(230, 255, 230);   // Light green
-    
-    public static final Color WHITE = Color.WHITE;
-    public static final Color BLACK = Color.BLACK;
-    public static final Color DARK_GRAY = new Color(50, 50, 50);        // Very dark gray
-    
-    public static final Color ACCENT = GREEN_DARK;
-    public static final Color TEXT_DARK = DARK_GRAY;                    // Almost black
+    public static final Color BACKGROUND = new Color(253, 245, 240);   // Warm off-white (redwood light base)
+    public static final Color CARD_BG = Color.WHITE;                   // Clean white cards
+    public static final Color TEXT_DARK = new Color(40, 30, 30);       // Near-black for readability
     public static final Color TEXT_LIGHT = Color.WHITE;
 
-    private UITheme() {
-    }
+    // Status colors (updated to match redwood theme)
+    public static final Color STATUS_PENDING = new Color(255, 230, 200);
+    public static final Color STATUS_ASSIGNED = new Color(220, 235, 250);
+    public static final Color STATUS_DELIVERED = new Color(220, 245, 232);
+    public static final Color STATUS_CANCELLED = new Color(240, 240, 240);
 
-    // ---------- PAGE BACKGROUND (SOLID WHITE FOR MAX CONTRAST) ----------
+    private UITheme() {}
+
     public static JPanel gradientPage(LayoutManager layout) {
         JPanel p = new JPanel(layout);
         p.setOpaque(true);
-        p.setBackground(Color.WHITE);  // SOLID WHITE - NO GRADIENT
+        p.setBackground(BACKGROUND); // Warm background
         return p;
     }
 
-    // ---------- CARD PANEL ----------
     public static JPanel cardPanel(LayoutManager layout) {
         JPanel p = new JPanel(layout);
         p.setOpaque(true);
-        p.setBackground(Color.WHITE);  // SOLID WHITE
-        p.setBorder(compoundCardBorder());
+        p.setBackground(CARD_BG);
+        p.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 210, 200), 1),
+                BorderFactory.createEmptyBorder(16, 16, 16, 16)
+        ));
         return p;
     }
 
-    private static Border compoundCardBorder() {
-        Border outer = BorderFactory.createLineBorder(new Color(200, 200, 200), 2);
-        Border inner = BorderFactory.createEmptyBorder(16, 16, 16, 16);
-        return BorderFactory.createCompoundBorder(outer, inner);
-    }
-
-    // ---------- BUTTON STYLES ----------
     public static void styleButton(JButton b) {
-        b.setFocusPainted(true);
-        b.setBackground(GREEN);
+        b.setFocusPainted(false);
+        b.setBackground(ACCENT);
         b.setForeground(TEXT_LIGHT);
-        b.setFont(headingFont(14));
+        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
         b.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(GREEN_DARK, 2),
-            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+                BorderFactory.createLineBorder(ACCENT_HOVER, 2),
+                BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.setContentAreaFilled(true);
-        
-        // Add bold font
-        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        // Hover effect
+        b.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                b.setBackground(ACCENT_HOVER);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                b.setBackground(ACCENT);
+            }
+        });
     }
-    
+
     public static void styleButtonSecondary(JButton b) {
-        b.setFocusPainted(true);
-        b.setBackground(WHITE);
-        b.setForeground(GREEN_DARK);
-        b.setFont(headingFont(14));
+        b.setFocusPainted(false);
+        b.setBackground(ACCENT_LIGHT);
+        b.setForeground(ACCENT);
+        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
         b.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(GREEN, 2),
-            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+                BorderFactory.createLineBorder(ACCENT, 1),
+                BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.setContentAreaFilled(true);
-        
-        // Add bold font
-        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        b.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                b.setBackground(ACCENT);
+                b.setForeground(TEXT_LIGHT);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                b.setBackground(ACCENT_LIGHT);
+                b.setForeground(ACCENT);
+            }
+        });
     }
 
-    // ---------- FONTS ----------
-    public static Font titleFont(int size) {
-        return new Font("Segoe UI", Font.BOLD, size);
-    }
-
-    public static Font headingFont(int size) {
-        return new Font("Segoe UI", Font.BOLD, size);
-    }
-
-    public static Font bodyFont(int size) {
-        return new Font("Segoe UI", Font.PLAIN, size);
-    }
+    public static Font titleFont(int size) { return new Font("Segoe UI", Font.BOLD, size); }
+    public static Font headingFont(int size) { return new Font("Segoe UI", Font.BOLD, size); }
+    public static Font bodyFont(int size) { return new Font("Segoe UI", Font.PLAIN, size); }
 }

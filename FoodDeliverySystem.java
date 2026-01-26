@@ -412,7 +412,6 @@ public void deleteRider(String riderId) {
         allOrders.add(order);
         pendingOrders.enqueue(order);
 
-        EmailNotification.showOrderConfirmation(order);
         JOptionPane.showMessageDialog(this, "✅ Order created successfully!");
     }
 
@@ -450,15 +449,13 @@ public void completeSelectedOrder(JTable table) {
 
     order.setStatus("Delivered");
 
-    // Try sending delivered email if rider exists
-    Rider rider = null;
+    // Update rider status if assigned
     if (order.getAssignedRiderId() != null) {
-        rider = ridersById.get(order.getAssignedRiderId());
-    }
-    if (rider != null) {
-        EmailNotification.showOrderDelivered(order, rider);
-        rider.setStatus("Available");
-        rider.setCurrentLocation(order.getDeliveryLocation());
+        Rider rider = ridersById.get(order.getAssignedRiderId());
+        if (rider != null) {
+            rider.setStatus("Available");
+            rider.setCurrentLocation(order.getDeliveryLocation());
+        }
     }
 
     JOptionPane.showMessageDialog(this, "✔ Order " + orderId + " marked Delivered.");

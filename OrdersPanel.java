@@ -247,10 +247,10 @@ public class OrdersPanel extends JPanel {
         button.setContentAreaFilled(true);
         button.setFocusPainted(true);
         button.setBackground(Color.WHITE);
-        button.setForeground(UITheme.GREEN_DARK);
+        button.setForeground(UITheme.ACCENT);
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.GREEN, 2),
+            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
     }
@@ -260,10 +260,10 @@ public class OrdersPanel extends JPanel {
         button.setContentAreaFilled(true);
         button.setFocusPainted(true);
         button.setBackground(Color.WHITE);
-        button.setForeground(UITheme.GREEN_DARK);
+        button.setForeground(UITheme.ACCENT);
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.GREEN, 2),
+            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
     }

@@ -61,14 +61,14 @@ public class MainFrame extends JFrame {
 
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(UITheme.GREEN_DARK);
-        menuBar.setBorder(BorderFactory.createLineBorder(UITheme.GREEN_DARK, 1));
+        menuBar.setBackground(UITheme.ACCENT);
+        menuBar.setBorder(BorderFactory.createLineBorder(UITheme.ACCENT, 1));
         
         // File Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.setFont(UITheme.bodyFont(13));
         fileMenu.setForeground(Color.WHITE);
-        fileMenu.setBackground(UITheme.GREEN_DARK);
+        fileMenu.setBackground(UITheme.ACCENT);
         fileMenu.setOpaque(true);
         
         JMenuItem saveItem = new JMenuItem("💾 Save All Data (CSV)");
@@ -116,7 +116,7 @@ public class MainFrame extends JFrame {
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setFont(UITheme.bodyFont(13));
         helpMenu.setForeground(Color.WHITE);
-        helpMenu.setBackground(UITheme.GREEN_DARK);
+        helpMenu.setBackground(UITheme.ACCENT);
         helpMenu.setOpaque(true);
         
         JMenuItem aboutItem = new JMenuItem("About");

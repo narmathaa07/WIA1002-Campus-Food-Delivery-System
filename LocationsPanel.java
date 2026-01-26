@@ -151,11 +151,11 @@ public class LocationsPanel extends JPanel {
         button.setOpaque(true);
         button.setContentAreaFilled(true);
         button.setFocusPainted(true);
-        button.setBackground(UITheme.GREEN);
+        button.setBackground(UITheme.ACCENT);
         button.setForeground(Color.WHITE);
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.GREEN_DARK, 1),
+            BorderFactory.createLineBorder(UITheme.ACCENT, 1),
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
     }
@@ -165,10 +165,10 @@ public class LocationsPanel extends JPanel {
         button.setContentAreaFilled(true);
         button.setFocusPainted(true);
         button.setBackground(Color.WHITE);
-        button.setForeground(UITheme.GREEN_DARK);
+        button.setForeground(UITheme.ACCENT);
         button.setFont(UITheme.headingFont(14));
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UITheme.GREEN, 2),
+            BorderFactory.createLineBorder(UITheme.ACCENT, 2),
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
     }

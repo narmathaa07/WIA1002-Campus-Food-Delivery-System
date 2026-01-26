@@ -106,7 +106,7 @@ public class WelcomePanel extends JPanel {
             g2.fillOval(x + 5, y + 7, d, d);
 
             // Main circle
-            g2.setColor(hover ? UITheme.GREEN_DARK : UITheme.GREEN);
+            g2.setColor(hover ? UITheme.ACCENT_HOVER : UITheme.ACCENT);
             g2.fillOval(x, y, d, d);
 
             // Inner ring highlight
