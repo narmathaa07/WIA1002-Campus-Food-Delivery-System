@@ -40,6 +40,6 @@
 • Rider Status: Monitor available vs. busy riders
 • Refresh: Update statistics after making changes
 
-Exit Tab
-• Safe Exit: Close the application with option to save data
-• System Information: View system features and version details
+🚪 Exit Tab
+Safe Exit: Close the application with option to save data
+System Information: View system features and version details
